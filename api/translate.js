@@ -4,13 +4,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { q, source, target } = req.body;
+    // Leggiamo il corpo della richiesta manualmente
+    let body = "";
+    for await (const chunk of req) {
+      body += chunk;
+    }
+    const { q, source, target } = JSON.parse(body);
 
     if (!q || !target) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Limite di sicurezza
     if (q.length > 500) {
       return res.status(400).json({ error: "Text too long (max 500 characters)" });
     }
@@ -27,7 +31,6 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-
     return res.status(200).json(data);
   } catch (error) {
     console.error("Translation error:", error);
