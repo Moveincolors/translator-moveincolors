@@ -7,7 +7,7 @@ document.getElementById("translate-btn").addEventListener("click", () => {
     return;
   }
 
-  fetch("https://libretranslate.com/translate", {
+  fetch("https://libretranslate.de/translate", {
     method: "POST",
     body: JSON.stringify({
       q: text,
@@ -17,12 +17,21 @@ document.getElementById("translate-btn").addEventListener("click", () => {
     }),
     headers: { "Content-Type": "application/json" }
   })
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("result").innerText = data.translatedText;
-  })
-  .catch(err => {
-    console.error(err);
-    document.getElementById("result").innerText = "Error during translation.";
-  });
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      if (data && data.translatedText) {
+        document.getElementById("result").innerText = data.translatedText;
+      } else {
+        document.getElementById("result").innerText = "No translation found.";
+      }
+    })
+    .catch(err => {
+      console.error("Translation error:", err);
+      document.getElementById("result").innerText = "Error during translation.";
+    });
 });
