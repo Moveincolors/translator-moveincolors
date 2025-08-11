@@ -7,15 +7,13 @@ document.getElementById("translate-btn").addEventListener("click", () => {
     return;
   }
 
-  fetch("https://libretranslate.de/translate", {
+  fetch("/api/translate", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       q: text,
-      source: "auto",
-      target: targetLang,
-      format: "text"
-    }),
-    headers: { "Content-Type": "application/json" }
+      target: targetLang
+    })
   })
     .then(res => {
       if (!res.ok) {
@@ -35,3 +33,5 @@ document.getElementById("translate-btn").addEventListener("click", () => {
       document.getElementById("result").innerText = "Error during translation.";
     });
 });
+
+
